@@ -7,38 +7,36 @@ public class Gradebook {
         Scanner input = new Scanner(System.in);
         int choice = 0;
 
-        // Main program loop
         while (true) {
             showMenu();
             System.out.print("Enter your choice: ");
 
-            // Protect against non-numeric input
             if (!input.hasNextInt()) {
                 System.out.println("Invalid input. Please enter a number.\n");
-                input.nextLine(); // clear bad input
+                input.nextLine();
                 continue;
             }
 
             choice = input.nextInt();
-            input.nextLine(); // clear the leftover newline
+            input.nextLine(); // clear newline
 
             if (choice == 1) {
-                System.out.println("Add Student feature coming soon...\n");
+                addStudent(students, input);
             }
             else if (choice == 2) {
-                System.out.println("Add Grade feature coming soon...\n");
+                addGradeToStudent(students, input);
             }
             else if (choice == 3) {
                 listStudents(students);
             }
             else if (choice == 4) {
-                System.out.println("View Student feature coming soon...\n");
+                viewStudent(students, input);
             }
             else if (choice == 5) {
-                System.out.println("Class Average feature coming soon...\n");
+                classAverage(students);
             }
             else if (choice == 6) {
-                System.out.println("Remove Student feature coming soon...\n");
+                removeStudent(students, input);
             }
             else if (choice == 7) {
                 System.out.println("Goodbye!");
@@ -52,7 +50,7 @@ public class Gradebook {
         input.close();
     }
 
-    // -------------------- Methods --------------------
+    // -------------------- Menu & Display --------------------
 
     public static void showMenu() {
         System.out.println("===== Student Gradebook =====");
@@ -72,9 +70,151 @@ public class Gradebook {
         }
 
         System.out.println("\n----- All Students -----");
-        for (Student s : students) {
-            s.display();
+        for (int i = 0; i < students.size(); i++) {
+            System.out.print((i + 1) + ". ");
+            students.get(i).display();
         }
         System.out.println();
+    }
+
+    // -------------------- Core Features --------------------
+
+    public static void addStudent(ArrayList<Student> students, Scanner input) {
+        System.out.print("Enter student name: ");
+        String name = input.nextLine().trim();
+
+        System.out.print("Enter student ID: ");
+        String id = input.nextLine().trim();
+
+        if (name.isEmpty() || id.isEmpty()) {
+            System.out.println("Name and ID cannot be empty.\n");
+            return;
+        }
+
+        // Check if ID already exists
+        for (Student s : students) {
+            if (s.getId().equalsIgnoreCase(id)) {
+                System.out.println("A student with that ID already exists.\n");
+                return;
+            }
+        }
+
+        students.add(new Student(name, id));
+        System.out.println("Student added successfully!\n");
+    }
+
+    public static void addGradeToStudent(ArrayList<Student> students, Scanner input) {
+        if (students.isEmpty()) {
+            System.out.println("No students available. Add a student first.\n");
+            return;
+        }
+
+        listStudents(students);
+        System.out.print("Enter the number of the student: ");
+
+        if (!input.hasNextInt()) {
+            System.out.println("Invalid input.\n");
+            input.nextLine();
+            return;
+        }
+
+        int index = input.nextInt();
+        input.nextLine();
+
+        if (index < 1 || index > students.size()) {
+            System.out.println("Invalid student number.\n");
+            return;
+        }
+
+        System.out.print("Enter grade (0-100): ");
+        if (!input.hasNextDouble()) {
+            System.out.println("Invalid grade.\n");
+            input.nextLine();
+            return;
+        }
+
+        double grade = input.nextDouble();
+        input.nextLine();
+
+        students.get(index - 1).addGrade(grade);
+        System.out.println("Grade added successfully!\n");
+    }
+
+    public static void viewStudent(ArrayList<Student> students, Scanner input) {
+        if (students.isEmpty()) {
+            System.out.println("No students in the gradebook yet.\n");
+            return;
+        }
+
+        listStudents(students);
+        System.out.print("Enter the number of the student to view: ");
+
+        if (!input.hasNextInt()) {
+            System.out.println("Invalid input.\n");
+            input.nextLine();
+            return;
+        }
+
+        int index = input.nextInt();
+        input.nextLine();
+
+        if (index < 1 || index > students.size()) {
+            System.out.println("Invalid student number.\n");
+            return;
+        }
+
+        System.out.println("\n----- Student Details -----");
+        students.get(index - 1).display();
+        System.out.println();
+    }
+
+    public static void classAverage(ArrayList<Student> students) {
+        if (students.isEmpty()) {
+            System.out.println("No students in the gradebook yet.\n");
+            return;
+        }
+
+        double total = 0.0;
+        int count = 0;
+
+        for (Student s : students) {
+            if (!s.getGrades().isEmpty()) {
+                total += s.getAverage();
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            System.out.println("No grades have been entered yet.\n");
+        } else {
+            System.out.printf("Class Average: %.2f%n\n", total / count);
+        }
+    }
+
+    public static void removeStudent(ArrayList<Student> students, Scanner input) {
+        if (students.isEmpty()) {
+            System.out.println("No students to remove.\n");
+            return;
+        }
+
+        listStudents(students);
+        System.out.print("Enter the number of the student to remove: ");
+
+        if (!input.hasNextInt()) {
+            System.out.println("Invalid input.\n");
+            input.nextLine();
+            return;
+        }
+
+        int index = input.nextInt();
+        input.nextLine();
+
+        if (index < 1 || index > students.size()) {
+            System.out.println("Invalid student number.\n");
+            return;
+        }
+
+        Student removed = students.remove(index - 1);
+        System.out.println("Removed: " + removed.getName() + " (" + removed.getId() + ")\n");
     }
 }

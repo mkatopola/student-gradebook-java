@@ -4,7 +4,7 @@ public class Student {
     // --- Variables (fields) ---
     private String name;
     private String id;
-    private ArrayList<Double> grades;   // Java Collection Framework
+    private ArrayList<Double> grades;
 
     // Constructor
     public Student(String name, String id) {
@@ -42,10 +42,10 @@ public class Student {
         }
 
         double sum = 0.0;
-        for (double g : grades) {   // loop
-            sum += g;               // expression
+        for (double g : grades) {   
+            sum += g;     
         }
-        return sum / grades.size(); // expression
+        return sum / grades.size();
     }
 
     // Convert average to letter grade (conditionals)
