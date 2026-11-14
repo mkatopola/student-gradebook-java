@@ -165,7 +165,9 @@ public class Gradebook {
             return;
         }
 
-        listStudents(students);
+        // First show the simple list
+        listStudentsSimple(students);
+
         System.out.print("Enter the number of the student to view: ");
 
         if (!input.hasNextInt()) {
@@ -182,6 +184,7 @@ public class Gradebook {
             return;
         }
 
+        // Then show full details of the selected student
         System.out.println("\n----- Student Details -----");
         students.get(index - 1).display();
         System.out.println();
