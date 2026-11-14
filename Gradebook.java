@@ -1,10 +1,17 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Gradebook {
+    private static final String DATA_FILE = "gradebook_data.txt";
+
     public static void main(String[] args) {
         ArrayList<Student> students = new ArrayList<>();
         Scanner input = new Scanner(System.in);
+
+        // Load existing data when the program starts
+        loadFromFile(students);
+
         int choice = 0;
 
         while (true) {
@@ -18,31 +25,28 @@ public class Gradebook {
             }
 
             choice = input.nextInt();
-            input.nextLine(); // clear newline
+            input.nextLine();
 
             if (choice == 1) {
                 addStudent(students, input);
-            }
-            else if (choice == 2) {
+            } else if (choice == 2) {
                 addGradeToStudent(students, input);
-            }
-            else if (choice == 3) {
-                listStudents(students);
-            }
-            else if (choice == 4) {
+            } else if (choice == 3) {
+                listStudentsSimple(students);
+            } else if (choice == 4) {
                 viewStudent(students, input);
-            }
-            else if (choice == 5) {
+            } else if (choice == 5) {
                 classAverage(students);
-            }
-            else if (choice == 6) {
+            } else if (choice == 6) {
                 removeStudent(students, input);
-            }
-            else if (choice == 7) {
-                System.out.println("Goodbye!");
+            } else if (choice == 7) {
+                saveToFile(students);
+                System.out.println("Data saved successfully.");
+            } else if (choice == 8) {
+                saveToFile(students);
+                System.out.println("Data saved. Goodbye!");
                 break;
-            }
-            else {
+            } else {
                 System.out.println("Invalid choice. Please try again.\n");
             }
         }
@@ -50,7 +54,7 @@ public class Gradebook {
         input.close();
     }
 
-    // -------------------- Menu & Display --------------------
+    // -------------------- Menu --------------------
 
     public static void showMenu() {
         System.out.println("===== Student Gradebook =====");
@@ -60,8 +64,11 @@ public class Gradebook {
         System.out.println("4. View Single Student");
         System.out.println("5. Class Average");
         System.out.println("6. Remove Student");
-        System.out.println("7. Exit");
+        System.out.println("7. Save to File");
+        System.out.println("8. Exit");
     }
+
+    // -------------------- Core Features --------------------
 
     public static void listStudents(ArrayList<Student> students) {
         if (students.isEmpty()) {
@@ -77,8 +84,6 @@ public class Gradebook {
         System.out.println();
     }
 
-    // -------------------- Core Features --------------------
-
     public static void addStudent(ArrayList<Student> students, Scanner input) {
         System.out.print("Enter student name: ");
         String name = input.nextLine().trim();
@@ -91,7 +96,6 @@ public class Gradebook {
             return;
         }
 
-        // Check if ID already exists
         for (Student s : students) {
             if (s.getId().equalsIgnoreCase(id)) {
                 System.out.println("A student with that ID already exists.\n");
@@ -109,7 +113,7 @@ public class Gradebook {
             return;
         }
 
-        listStudents(students);
+        listStudentsSimple(students);
         System.out.print("Enter the number of the student: ");
 
         if (!input.hasNextInt()) {
@@ -138,6 +142,21 @@ public class Gradebook {
 
         students.get(index - 1).addGrade(grade);
         System.out.println("Grade added successfully!\n");
+    }
+
+    // Simple list showing only ID and Name (used by options 2 and 3)
+    public static void listStudentsSimple(ArrayList<Student> students) {
+        if (students.isEmpty()) {
+            System.out.println("No students in the gradebook yet.\n");
+            return;
+        }
+
+        System.out.println("\n----- Students -----");
+        for (int i = 0; i < students.size(); i++) {
+            Student s = students.get(i);
+            System.out.println((i + 1) + ". " + s.getId() + " : " + s.getName());
+        }
+        System.out.println();
     }
 
     public static void viewStudent(ArrayList<Student> students, Scanner input) {
@@ -216,5 +235,39 @@ public class Gradebook {
 
         Student removed = students.remove(index - 1);
         System.out.println("Removed: " + removed.getName() + " (" + removed.getId() + ")\n");
+    }
+
+    // -------------------- File Operations --------------------
+
+    public static void saveToFile(ArrayList<Student> students) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_FILE))) {
+            for (Student s : students) {
+                writer.println(s.toFileString());
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    public static void loadFromFile(ArrayList<Student> students) {
+        File file = new File(DATA_FILE);
+        if (!file.exists()) {
+            return; // No file yet – that's fine
+        }
+
+        try (Scanner fileScanner = new Scanner(file)) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine().trim();
+                if (!line.isEmpty()) {
+                    Student s = Student.fromFileString(line);
+                    if (s != null) {
+                        students.add(s);
+                    }
+                }
+            }
+            System.out.println("Loaded " + students.size() + " student(s) from file.\n");
+        } catch (IOException e) {
+            System.out.println("Error loading data: " + e.getMessage());
+        }
     }
 }

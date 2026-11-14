@@ -71,4 +71,34 @@ public class Student {
                 id, name, grades.toString(), getAverage(), getLetterGrade());
     }
     
+        // Convert student data into a line for the file
+    // Format: id,name,grade1,grade2,grade3,...
+    public String toFileString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id).append(",").append(name);
+
+        for (double g : grades) {
+            sb.append(",").append(g);
+        }
+        return sb.toString();
+    }
+
+    // Create a Student object from a line in the file
+    public static Student fromFileString(String line) {
+        String[] parts = line.split(",");
+        if (parts.length < 2) {
+            return null;
+        }
+
+        Student student = new Student(parts[1], parts[0]); // name, id
+
+        for (int i = 2; i < parts.length; i++) {
+            try {
+                student.addGrade(Double.parseDouble(parts[i]));
+            } catch (NumberFormatException e) {
+                // skip invalid grade
+            }
+        }
+        return student;
+    }
 }
