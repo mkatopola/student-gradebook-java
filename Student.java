@@ -1,12 +1,17 @@
 import java.util.ArrayList;
 
+// ============================================================
+//  Student class
+//  Represents one student with a name, ID, and list of grades
+// ============================================================
 public class Student {
-    // --- Variables (fields) ---
+
+    // --- Variables ---
     private String name;
     private String id;
     private ArrayList<Double> grades;
 
-    // Constructor
+    // Constructor – creates a new student
     public Student(String name, String id) {
         this.name = name;
         this.id = id;
@@ -26,7 +31,7 @@ public class Student {
         return grades;
     }
 
-    // Add a grade (with validation)
+    // Add a grade (only accepts values between 0 and 100)
     public void addGrade(double grade) {
         if (grade >= 0.0 && grade <= 100.0) {
             grades.add(grade);
@@ -35,20 +40,20 @@ public class Student {
         }
     }
 
-    // Calculate average using a loop and expression
+    // Calculate the average of all grades
     public double getAverage() {
         if (grades.isEmpty()) {
             return 0.0;
         }
 
         double sum = 0.0;
-        for (double g : grades) {   
-            sum += g;     
+        for (double g : grades) {
+            sum += g;
         }
         return sum / grades.size();
     }
 
-    // Convert average to letter grade (conditionals)
+    // Convert the average into a letter grade
     public String getLetterGrade() {
         double avg = getAverage();
 
@@ -65,13 +70,13 @@ public class Student {
         }
     }
 
-    // Nice display of the student
+    // Display full details of the student
     public void display() {
         System.out.printf("ID: %s | Name: %s | Grades: %s | Average: %.2f (%s)%n",
                 id, name, grades.toString(), getAverage(), getLetterGrade());
     }
-    
-        // Convert student data into a line for the file
+
+    // Convert student data into a line for saving to a file
     // Format: id,name,grade1,grade2,grade3,...
     public String toFileString() {
         StringBuilder sb = new StringBuilder();
@@ -96,7 +101,7 @@ public class Student {
             try {
                 student.addGrade(Double.parseDouble(parts[i]));
             } catch (NumberFormatException e) {
-                // skip invalid grade
+                // skip invalid numbers
             }
         }
         return student;
