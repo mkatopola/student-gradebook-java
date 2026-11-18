@@ -16,14 +16,9 @@ import java.util.Scanner;
 
 public class Gradebook {
 
-    private static final String DATA_FILE = "gradebook_data.txt";
-
     public static void main(String[] args) {
         ArrayList<Student> students = new ArrayList<>();
         Scanner input = new Scanner(System.in);
-
-        // Load any previously saved data when the program starts
-        loadFromFile(students);
 
         int choice = 0;
 
@@ -40,33 +35,34 @@ public class Gradebook {
             }
 
             choice = input.nextInt();
-            input.nextLine();
+            input.nextLine();   // clear the leftover newline
 
             if (choice == 1) {
-                addStudent(students, input);
+                loadFromFile(students, input);
             }
             else if (choice == 2) {
-                addGradeToStudent(students, input);
+                addStudent(students, input);
             }
             else if (choice == 3) {
-                listStudentsSimple(students);
+                addGradeToStudent(students, input);
             }
             else if (choice == 4) {
-                viewStudent(students, input);
+                listStudentsSimple(students);
             }
             else if (choice == 5) {
-                classAverage(students);
+                viewStudent(students, input);
             }
             else if (choice == 6) {
-                removeStudent(students, input);
+                classAverage(students);
             }
             else if (choice == 7) {
-                saveToFile(students);
-                System.out.println("Data saved successfully.\n");
+                removeStudent(students, input);
             }
             else if (choice == 8) {
-                saveToFile(students);
-                System.out.println("Data saved. Goodbye!");
+                saveToFile(students, input);
+            }
+            else if (choice == 9) {
+                System.out.println("Goodbye!");
                 break;
             }
             else {
@@ -82,18 +78,19 @@ public class Gradebook {
     // ------------------------------------------------------------
     public static void showMenu() {
         System.out.println("===== Student Gradebook =====");
-        System.out.println("1. Add Student");
-        System.out.println("2. Add Grade to Student");
-        System.out.println("3. List All Students");
-        System.out.println("4. View Single Student");
-        System.out.println("5. Class Average");
-        System.out.println("6. Remove Student");
-        System.out.println("7. Save to File");
-        System.out.println("8. Exit");
+        System.out.println("1. Load Course Gradebook");
+        System.out.println("2. Add Student");
+        System.out.println("3. Add Grade to Student");
+        System.out.println("4. List All Students");
+        System.out.println("5. View Single Student");
+        System.out.println("6. Class Average");
+        System.out.println("7. Remove Student");
+        System.out.println("8. Save Course Gradebook");
+        System.out.println("9. Exit");
     }
 
     // ------------------------------------------------------------
-    // Shows a simple list (ID : Name)
+    // Shows a simple list (ID : Name) – used by several options
     // ------------------------------------------------------------
     public static void listStudentsSimple(ArrayList<Student> students) {
         if (students.isEmpty()) {
@@ -264,28 +261,88 @@ public class Gradebook {
     }
 
     // ------------------------------------------------------------
-    // Saves all students to a text file
+    // Saves all students to a file (user chooses the name)
+    // Warns before overwriting an existing file
     // ------------------------------------------------------------
-    public static void saveToFile(ArrayList<Student> students) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_FILE))) {
+    public static void saveToFile(ArrayList<Student> students, Scanner input) {
+        if (students.isEmpty()) {
+            System.out.println("No students to save.\n");
+            return;
+        }
+
+        System.out.print("Enter Course Code for the filename: ");
+        String filename = input.nextLine().trim();
+
+        if (filename.isEmpty()) {
+            System.out.println("Filename cannot be empty.\n");
+            return;
+        }
+
+        filename = filename + ".txt";
+
+        File file = new File(filename);
+
+        // Ask before overwriting
+        if (file.exists()) {
+            System.out.print("File \"" + filename + "\" already exists. Overwrite? (y/n): ");
+            String answer = input.nextLine().trim();
+
+            if (!answer.equalsIgnoreCase("y")) {
+                System.out.println("Save cancelled.\n");
+                return;
+            }
+        }
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             for (Student s : students) {
                 writer.println(s.toFileString());
             }
+            System.out.println("Data saved successfully to \"" + filename + "\".\n");
         } catch (IOException e) {
-            System.out.println("Error saving data: " + e.getMessage());
+            System.out.println("Error saving data: " + e.getMessage() + "\n");
         }
     }
 
     // ------------------------------------------------------------
-    // Loads students from the text file (if it exists)
+    // Lists all .txt files and lets the user choose which one to load
     // ------------------------------------------------------------
-    public static void loadFromFile(ArrayList<Student> students) {
-        File file = new File(DATA_FILE);
-        if (!file.exists()) {
+    public static void loadFromFile(ArrayList<Student> students, Scanner input) {
+        File folder = new File(".");
+        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
+
+        if (files == null || files.length == 0) {
+            System.out.println("No .txt files found in the current directory.\n");
             return;
         }
 
-        try (Scanner fileScanner = new Scanner(file)) {
+        // Show available files
+        System.out.println("\n----- Available Gradebook Files -----");
+        for (int i = 0; i < files.length; i++) {
+            System.out.println((i + 1) + ". " + files[i].getName());
+        }
+
+        System.out.print("\nEnter the number of the file to load: ");
+
+        if (!input.hasNextInt()) {
+            System.out.println("Invalid input.\n");
+            input.nextLine();
+            return;
+        }
+
+        int choice = input.nextInt();
+        input.nextLine();
+
+        if (choice < 1 || choice > files.length) {
+            System.out.println("Invalid selection.\n");
+            return;
+        }
+
+        File selectedFile = files[choice - 1];
+
+        // Clear current list before loading new data
+        students.clear();
+
+        try (Scanner fileScanner = new Scanner(selectedFile)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
                 if (!line.isEmpty()) {
@@ -295,9 +352,10 @@ public class Gradebook {
                     }
                 }
             }
-            System.out.println("Loaded " + students.size() + " student(s) from file.\n");
+            System.out.println("Successfully loaded " + students.size() +
+                               " student(s) from \"" + selectedFile.getName() + "\".\n");
         } catch (IOException e) {
-            System.out.println("Error loading data: " + e.getMessage());
+            System.out.println("Error loading data: " + e.getMessage() + "\n");
         }
     }
 }
