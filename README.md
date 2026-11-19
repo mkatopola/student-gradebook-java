@@ -18,6 +18,23 @@ I created this software to deepen my understanding of core Java concepts such as
 Programming language: Java  
 Key library / feature used: `java.util.ArrayList` (Java Collections Framework) and standard file I/O (`java.io`)
 
+# How to Compile and Run
+
+1. Open a terminal in the project folder that contains `Student.java` and `Gradebook.java`.
+2. Compile both source files:
+
+   ```bash
+   javac Student.java Gradebook.java
+   ```
+
+3. Run the program:
+
+   ```bash
+   java Gradebook
+   ```
+
+The program looks for and saves gradebook `.txt` files in the folder you run it from, so start it from the project folder to keep your data files together. For example, save a gradebook as `class.txt` and it will be created in that same folder.
+
 # Useful Websites
 
 
