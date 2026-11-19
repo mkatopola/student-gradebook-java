@@ -31,13 +31,14 @@ public class Student {
         return grades;
     }
 
-    // Add a grade (only accepts values between 0 and 100)
-    public void addGrade(double grade) {
+    // Add a grade (only accepts values between 0 and 100).
+    // Returns true when the grade was added and false when it was rejected.
+    public boolean addGrade(double grade) {
         if (grade >= 0.0 && grade <= 100.0) {
             grades.add(grade);
-        } else {
-            System.out.println("Invalid grade. Must be between 0 and 100.");
+            return true;
         }
+        return false;
     }
 
     // Calculate the average of all grades
@@ -54,7 +55,12 @@ public class Student {
     }
 
     // Convert the average into a letter grade
+    // Returns "N/A" when the student has no grades yet
     public String getLetterGrade() {
+        if (grades.isEmpty()) {
+            return "N/A";
+        }
+
         double avg = getAverage();
 
         if (avg >= 90.0) {
@@ -72,32 +78,43 @@ public class Student {
 
     // Display full details of the student
     public void display() {
-        System.out.printf("ID: %s | Name: %s | Grades: %s | Average: %.2f (%s)%n",
-                id, name, grades.toString(), getAverage(), getLetterGrade());
+        if (grades.isEmpty()) {
+            System.out.printf("ID: %s | Name: %s | Grades: [] | Average: N/A%n",
+                    id, name);
+        } else {
+            System.out.printf("ID: %s | Name: %s | Grades: %s | Average: %.2f (%s)%n",
+                    id, name, grades.toString(), getAverage(), getLetterGrade());
+        }
     }
 
-    // Convert student data into a line for saving to a file
-    // Format: id,name,grade1,grade2,grade3,...
+    // Convert student data into a line for saving to a file.
+    // Format: id|name|grade1|grade2|grade3,...
+    // A pipe is used instead of a comma so names like "Katopola, Moffat" stay intact.
     public String toFileString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(id).append(",").append(name);
+        sb.append(id).append("|").append(name);
 
         for (double g : grades) {
-            sb.append(",").append(g);
+            sb.append("|").append(g);
         }
         return sb.toString();
     }
 
-    // Create a Student object from a line in the file
+    // Create a Student object from a line in the file.
+    // New files use the pipe format; older comma-separated files are still accepted.
     public static Student fromFileString(String line) {
-        String[] parts = line.split(",");
-        if (parts.length < 2) {
+        String delimiter = line.contains("|") ? "\\|" : ",";
+        String[] parts = line.split(delimiter, -1);
+        if (parts.length < 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
             return null;
         }
 
         Student student = new Student(parts[1], parts[0]); // name, id
 
         for (int i = 2; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
+                continue;
+            }
             try {
                 student.addGrade(Double.parseDouble(parts[i]));
             } catch (NumberFormatException e) {

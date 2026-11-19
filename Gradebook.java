@@ -121,6 +121,12 @@ public class Gradebook {
             return;
         }
 
+        // The file format uses '|' as a separator, so it cannot appear in a name or ID
+        if (name.contains("|") || id.contains("|")) {
+            System.out.println("Name and ID cannot contain the '|' character.\n");
+            return;
+        }
+
         // Check for duplicate ID
         for (Student s : students) {
             if (s.getId().equalsIgnoreCase(id)) {
@@ -169,8 +175,11 @@ public class Gradebook {
         double grade = input.nextDouble();
         input.nextLine();
 
-        students.get(index - 1).addGrade(grade);
-        System.out.println("Grade added successfully!\n");
+        if (students.get(index - 1).addGrade(grade)) {
+            System.out.println("Grade added successfully!\n");
+        } else {
+            System.out.println("Invalid grade. Must be between 0 and 100.\n");
+        }
     }
 
     // ------------------------------------------------------------
