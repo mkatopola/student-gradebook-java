@@ -1,0 +1,18 @@
+# Java compiled classes
+*.class
+
+# Runtime gradebook data (created by the program)
+*.txt
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.iml
+
+# Build output
+bin/
+out/
+build/
+
+# OS files
+.DS_Store
