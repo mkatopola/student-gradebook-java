@@ -2,7 +2,7 @@
 
 As a software engineer focused on continuous growth, I built this project to strengthen my practical skills in Java, particularly around object-oriented design, collections, and file persistence. Working with real data structures and user interaction helped me move beyond basic syntax into writing cleaner, more maintainable console applications.
 
-This is a console-based Student Gradebook application written in Java. It allows users to manage student records by adding students, recording grades, viewing individual and class performance, calculating averages and letter grades, removing students, and saving/loading data from text files. The program uses an interactive menu, supports multiple gradebook files, and provides clear feedback to the user.
+This is a console-based Course Gradebook application written in Java. It allows users to manage student records by adding students, recording grades, viewing individual and class performance, calculating averages and letter grades, removing students, and saving/loading data from text files. The program uses an interactive menu, supports multiple gradebook files, and provides clear feedback to the user.
 
 I created this software to deepen my understanding of core Java concepts such as classes, methods, the Java Collections Framework (ArrayList), conditionals, loops, and file input/output, while building something practical and reusable.
 

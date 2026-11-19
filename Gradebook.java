@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 // ============================================================
-//  Student Gradebook
+//  Course Gradebook
 //  CSE 310 - Applied Programming (Module 2: Java)
 //  Author: Moffat Katopola
 // ============================================================
