@@ -77,15 +77,15 @@ public class Gradebook {
     // Displays the main menu
     // ------------------------------------------------------------
     public static void showMenu() {
-        System.out.println("===== Student Gradebook =====");
-        System.out.println("1. Load Course Gradebook");
+        System.out.println("\n===== Course Gradebook =====\n");
+        System.out.println("1. Load Gradebook");
         System.out.println("2. Add Student");
         System.out.println("3. Add Grade to Student");
         System.out.println("4. List All Students");
         System.out.println("5. View Single Student");
         System.out.println("6. Class Average");
         System.out.println("7. Remove Student");
-        System.out.println("8. Save Course Gradebook");
+        System.out.println("8. Save Gradebook");
         System.out.println("9. Exit");
     }
 
