@@ -6,7 +6,7 @@ This is a console-based Course Gradebook application written in Java. It allows 
 
 I created this software to deepen my understanding of core Java concepts such as classes, methods, the Java Collections Framework (ArrayList), conditionals, loops, and file input/output, while building something practical and reusable.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/uwAEKTbkjGc)
 
 # Development Environment
 
